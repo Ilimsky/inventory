@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:inventory_frontend/screens/sked_screen/skeds_dialogs.dart';
-import 'package:inventory_frontend/screens/sked_screen/skeds_print.dart';
 
 import '../../models/Sked.dart';
 import '../../models/Department.dart';
-import '../../models/Job.dart';
 import '../../models/Employee.dart';
 import '../../providers/DepartmentProvider.dart';
-import '../../providers/JobProvider.dart';
 import '../../providers/EmployeeProvider.dart';
 
 List<DataRow> buildTableRows({
   required BuildContext context,
   required List<Sked> skeds,
   required DepartmentProvider departmentProvider,
-  required JobProvider jobProvider,
   required EmployeeProvider employeeProvider,
 }) {
   final dateFormat = DateFormat('dd.MM.yyyy');
@@ -27,11 +23,6 @@ List<DataRow> buildTableRows({
     final department = departmentProvider.departments.firstWhere(
           (d) => d.id == sked.departmentId,
       orElse: () => Department(id: 0, name: 'Неизвестно'),
-    );
-
-    final job = jobProvider.jobs.firstWhere(
-          (j) => j.id == sked.jobId,
-      orElse: () => Job(id: 0, name: 'Неизвестно'),
     );
 
     final employee = employeeProvider.employees.firstWhere(
@@ -49,10 +40,9 @@ List<DataRow> buildTableRows({
       _buildDataCell(sked.measure, 30, 1),
       _buildDataCell(sked.price.toString(), 70, 1),
       _buildDataCell(sked.place.toString(), 70, 1),
-      _buildDataCell(job.name, 120, 3),
       _buildDataCell(employee.name, 120, 1),
       _buildDataCell(sked.comments, 150, 3),
-      _buildActionsCell(context, sked, department, job, employee),
+      _buildActionsCell(context, sked, department, employee),
     ]);
   }).toList();
 }
@@ -75,7 +65,6 @@ DataCell _buildActionsCell(
     BuildContext context,
     Sked sked,
     Department department,
-    Job job,
     Employee employee,
     ) {
   return DataCell(

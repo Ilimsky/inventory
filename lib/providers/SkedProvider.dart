@@ -49,7 +49,6 @@ class SkedProvider extends ChangeNotifier {
 
   Future<Sked> createSked({
     required int departmentId,
-    required int jobId,
     required int employeeId,
     required DateTime dateReceived,
     required String itemName,
@@ -65,7 +64,6 @@ class SkedProvider extends ChangeNotifier {
 
       final newSked = await ApiService().createSked(
         departmentId: departmentId,
-        jobId: jobId,
         employeeId: employeeId,
         dateReceived: dateReceived,
         itemName: itemName,
@@ -94,7 +92,6 @@ class SkedProvider extends ChangeNotifier {
       int skedId, {
         required int skedNumber,
         required int departmentId,
-        required int jobId,
         required int employeeId,
         required DateTime dateReceived,
         required String itemName,
@@ -112,7 +109,6 @@ class SkedProvider extends ChangeNotifier {
         skedId,
         skedNumber: skedNumber,
         departmentId: departmentId,
-        jobId: jobId,
         employeeId: employeeId,
         dateReceived: dateReceived,
         itemName: itemName,

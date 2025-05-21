@@ -6,11 +6,10 @@ import 'package:intl/intl.dart';
 
 import '../../models/Sked.dart';
 import '../../models/Department.dart';
-import '../../models/Job.dart';
 import '../../models/Employee.dart';
 
-Future<void> printSked(Sked sked, Department department, Job job,
-    Employee employee) async {
+Future<void> printSked(
+    Sked sked, Department department, Employee employee) async {
   final pdf = pw.Document();
   final dateFormat = DateFormat('dd.MM.yyyy');
 
@@ -20,7 +19,9 @@ Future<void> printSked(Sked sked, Department department, Job job,
         return pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Header(level: 0, child: pw.Text('Отчет №${sked.skedNumber}/${department.name}')),
+            pw.Header(
+                level: 0,
+                child: pw.Text('Отчет №${sked.skedNumber}/${department.name}')),
             pw.SizedBox(height: 20),
             pw.Table(
               border: pw.TableBorder.all(),

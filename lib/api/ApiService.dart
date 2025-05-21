@@ -4,13 +4,11 @@ import 'package:intl/intl.dart';
 import '../models/Department.dart';
 import '../models/Employee.dart';
 import '../models/Binding.dart';
-import '../models/Job.dart';
 import '../models/Sked.dart';
 
 class ApiService {
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8060/api'));
-
-  // final Dio _dio = Dio(BaseOptions(baseUrl: 'https://advance-sked.onrender.com/api'));
+  // final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8060/api'));
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'https://inventory-3z06.onrender.com/api'));
 
   Future<List<Department>> fetchDepartments() async {
     try {
@@ -34,7 +32,6 @@ class ApiService {
 
   Future<Sked> createSked({
     required int departmentId,
-    required int jobId,
     required int employeeId,
     required DateTime dateReceived,
     required String itemName,
@@ -50,7 +47,6 @@ class ApiService {
         '/skeds',
         data: {
           'departmentId': departmentId,
-          'jobId': jobId,
           'employeeId': employeeId,
           'dateReceived': DateFormat('yyyy-MM-dd').format(dateReceived),
           'itemName': itemName,
@@ -115,7 +111,6 @@ class ApiService {
     int skedId, {
     required int skedNumber,
     required int departmentId,
-    required int jobId,
     required int employeeId,
     required DateTime dateReceived,
     required String itemName,
@@ -130,7 +125,6 @@ class ApiService {
       final requestData = {
         'skedNumber': skedNumber,
         'departmentId': departmentId,
-        'jobId': jobId,
         'employeeId': employeeId,
         'dateReceived': DateFormat('yyyy-MM-dd').format(dateReceived),
         'itemName': itemName,
@@ -167,41 +161,6 @@ class ApiService {
   Future<void> deleteSked(int skedId) async {
     try {
       await _dio.delete('/skeds/$skedId');
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<List<Job>> fetchJobs() async {
-    try {
-      final response = await _dio.get('/jobs');
-      return (response.data as List).map((json) => Job.fromJson(json)).toList();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<Job> createJob(String name) async {
-    try {
-      final response = await _dio.post('/jobs', data: {'name': name});
-      return Job.fromJson(response.data);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<Job> updateJob(int id, String newName) async {
-    try {
-      final response = await _dio.put('/jobs/$id', data: {'name': newName});
-      return Job.fromJson(response.data);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> deleteJob(int id) async {
-    try {
-      await _dio.delete('/jobs/$id');
     } catch (e) {
       rethrow;
     }
@@ -261,7 +220,6 @@ class ApiService {
   Future<Binding> createBinding({
     required int employeeId,
     required int departmentId,
-    required int jobId,
   }) async {
     try {
       final response = await _dio.post(
@@ -269,7 +227,6 @@ class ApiService {
         data: {
           'employee': {'id': employeeId},
           'department': {'id': departmentId},
-          'job': {'id': jobId},
         },
       );
       print('[DEBUG] createBinding response: ${response.data}');
@@ -284,7 +241,6 @@ class ApiService {
     int id, {
     required int employeeId,
     required int departmentId,
-    required int jobId,
   }) async {
     try {
       final response = await _dio.put(
@@ -292,7 +248,6 @@ class ApiService {
         data: {
           'employee': {'id': employeeId},
           'department': {'id': departmentId},
-          'job': {'id': jobId},
         },
       );
       print('[DEBUG] updateBinding response: ${response.data}');

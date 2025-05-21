@@ -2,13 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/Department.dart';
-import '../../models/Employee.dart';
-import '../../models/Job.dart';
 import '../../providers/BindingProvider.dart';
 import '../../providers/DepartmentProvider.dart';
 import '../../providers/EmployeeProvider.dart';
-import '../../providers/JobProvider.dart';
 
 // импорт не изменился
 class BindingsTab extends StatefulWidget {
@@ -19,7 +15,6 @@ class BindingsTab extends StatefulWidget {
 class _BindingsTabState extends State<BindingsTab> {
   int? selectedEmployeeId;
   int? selectedDepartmentId;
-  int? selectedJobId;
 
   @override
   void initState() {
@@ -33,7 +28,6 @@ class _BindingsTabState extends State<BindingsTab> {
   Widget build(BuildContext context) {
     final employeeProvider = Provider.of<EmployeeProvider>(context);
     final departmentProvider = Provider.of<DepartmentProvider>(context);
-    final jobProvider = Provider.of<JobProvider>(context);
     final bindingProvider = Provider.of<BindingProvider>(context);
 
     return Column(
@@ -64,26 +58,13 @@ class _BindingsTabState extends State<BindingsTab> {
                 ),
               ),
               SizedBox(width: 8),
-              Expanded(
-                child: DropdownButtonFormField<int>(
-                  decoration: InputDecoration(labelText: 'Должность'),
-                  value: selectedJobId,
-                  items: jobProvider.jobs
-                      .map((j) => DropdownMenuItem(value: j.id, child: Text(j.name)))
-                      .toList(),
-                  onChanged: (value) => setState(() => selectedJobId = value),
-                ),
-              ),
-              SizedBox(width: 8),
               ElevatedButton(
                 onPressed: selectedEmployeeId != null &&
-                    selectedDepartmentId != null &&
-                    selectedJobId != null
+                    selectedDepartmentId != null
                     ? () {
                   bindingProvider.createBinding(
                     employeeId: selectedEmployeeId!,
                     departmentId: selectedDepartmentId!,
-                    jobId: selectedJobId!,
                   );
                 }
                     : null,
@@ -101,10 +82,9 @@ class _BindingsTabState extends State<BindingsTab> {
 
               final employee = binding.employee?.name ?? 'Не найдено';
               final department = binding.department?.name ?? 'Не найдено';
-              final job = binding.job?.name ?? 'Не найдено';
 
               return ListTile(
-                title: Text('$employee → $department ($job)'),
+                title: Text('$employee → $department'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -129,11 +109,9 @@ class _BindingsTabState extends State<BindingsTab> {
   void _showEditDialog(BuildContext context, BindingProvider provider, binding) {
     int? employeeId = binding.employee?.id;
     int? departmentId = binding.department?.id;
-    int? jobId = binding.job?.id;
 
     final employeeProvider = Provider.of<EmployeeProvider>(context, listen: false);
     final departmentProvider = Provider.of<DepartmentProvider>(context, listen: false);
-    final jobProvider = Provider.of<JobProvider>(context, listen: false);
 
     showDialog(
       context: context,
@@ -159,26 +137,17 @@ class _BindingsTabState extends State<BindingsTab> {
                     .toList(),
                 onChanged: (value) => setState(() => departmentId = value),
               ),
-              DropdownButtonFormField<int>(
-                decoration: InputDecoration(labelText: 'Должность'),
-                value: jobProvider.jobs.any((j) => j.id == jobId) ? jobId : null,
-                items: jobProvider.jobs
-                    .map((j) => DropdownMenuItem(value: j.id, child: Text(j.name)))
-                    .toList(),
-                onChanged: (value) => setState(() => jobId = value),
-              ),
             ],
           ),
           actions: [
             TextButton(
               child: Text('Сохранить'),
               onPressed: () {
-                if (employeeId != null && departmentId != null && jobId != null) {
+                if (employeeId != null && departmentId != null) {
                   provider.updateBinding(
                     binding.id,
                     employeeId: employeeId!,
                     departmentId: departmentId!,
-                    jobId: jobId!,
                   );
                   Navigator.pop(context);
                 }

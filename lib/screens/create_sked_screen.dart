@@ -4,11 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../models/Employee.dart';
-import '../models/Job.dart';
 import '../models/Department.dart';
 import '../providers/DepartmentProvider.dart';
 import '../providers/EmployeeProvider.dart';
-import '../providers/JobProvider.dart';
 import '../providers/SkedProvider.dart';
 
 class CreateSkedScreen extends StatefulWidget {
@@ -19,8 +17,6 @@ class CreateSkedScreen extends StatefulWidget {
 class _CreateSkedScreenState extends State<CreateSkedScreen> {
   int? selectedDepartmentId;
   Department? selectedDepartment;
-  int? selectedJobId;
-  Job? selectedJob;
   int? selectedEmployeeId;
   Employee? selectedEmployee;
   DateTime? selectedDateReceived;
@@ -78,7 +74,6 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
   @override
   Widget build(BuildContext context) {
     final departmentProvider = Provider.of<DepartmentProvider>(context);
-    final jobProvider = Provider.of<JobProvider>(context);
     final employeeProvider = Provider.of<EmployeeProvider>(context);
     final skedProvider = Provider.of<SkedProvider>(context);
 
@@ -254,31 +249,6 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: DropdownButton<int>(
-                        hint: Text('Должность', style: TextStyle(fontSize: 14)),
-                        value: selectedJobId,
-                        onChanged: (newId) {
-                          setState(() {
-                            selectedJobId = newId;
-                            selectedJob = jobProvider.jobs
-                                .firstWhere((job) => job.id == newId);
-                          });
-                        },
-                        items: jobProvider.jobs.map((job) {
-                          return DropdownMenuItem(
-                            value: job.id,
-                            child:
-                                Text(job.name, style: TextStyle(fontSize: 14)),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButton<int>(
                         hint: Text('Сотрудник', style: TextStyle(fontSize: 14)),
                         value: selectedEmployeeId,
                         onChanged: (newId) {
@@ -327,13 +297,11 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (selectedDepartmentId != null &&
-                          selectedJobId != null &&
                           selectedEmployeeId != null &&
                           selectedDateReceived != null) {
                         try {
                           await skedProvider.createSked(
                             departmentId: selectedDepartmentId!,
-                            jobId: selectedJobId!,
                             employeeId: selectedEmployeeId!,
                             dateReceived: selectedDateReceived!,
                             itemName: _itemNameController.text,
@@ -385,7 +353,6 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                             'Ед. изм.': _measureController.text,
                             'Стоимость': _priceController.text,
                             'Местоположение': _placeController.text,
-                            'Должность': selectedJob?.name ?? 'Не выбран',
                             'Сотрудник': selectedEmployee?.name ?? 'Не выбран',
                             'Комментарии': _commentsController.text,
                           });
@@ -414,7 +381,6 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
   void _clearFields() {
     setState(() {
       selectedDepartmentId = null;
-      selectedJobId = null;
       selectedEmployeeId = null;
       selectedDateReceived = null;
       _dateReceivedController.clear();

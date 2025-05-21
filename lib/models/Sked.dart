@@ -1,7 +1,6 @@
 class Sked {
   final int id;
   final int departmentId;
-  final int jobId;
   final int employeeId;
 
   DateTime dateReceived;
@@ -20,7 +19,6 @@ class Sked {
     required this.id,
     required this.skedNumber,
     required this.departmentId,
-    required this.jobId,
     required this.employeeId,
     required this.dateReceived,
     required this.itemName,
@@ -39,7 +37,6 @@ class Sked {
       id: json['id'],
       skedNumber: json['skedNumber'],
       departmentId: json['departmentId'],
-      jobId: json['jobId'],
       employeeId: json['employeeId'],
       dateReceived: DateTime.parse(json['dateReceived']),
       itemName: json['itemName'],

@@ -28,13 +28,11 @@ class BindingProvider extends ChangeNotifier {
   Future<void> createBinding({
     required int employeeId,
     required int departmentId,
-    required int jobId,  // Добавлен параметр jobId
   }) async {
     try {
       final newBinding = await ApiService().createBinding(
         employeeId: employeeId,
         departmentId: departmentId,
-        jobId: jobId,  // Передаем jobId
       );
       _bindings.add(newBinding);
       notifyListeners();
@@ -47,14 +45,12 @@ class BindingProvider extends ChangeNotifier {
       int id, {
         required int employeeId,
         required int departmentId,
-        required int jobId,  // Добавлен параметр jobId
       }) async {
     try {
       final updated = await ApiService().updateBinding(
         id,
         employeeId: employeeId,
         departmentId: departmentId,
-        jobId: jobId,  // Передаем jobId
       );
       final index = _bindings.indexWhere((a) => a.id == id);
       if (index != -1) {

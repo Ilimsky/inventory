@@ -7,7 +7,6 @@ import 'package:inventory_frontend/screens/create_sked_screen.dart';
 import 'package:inventory_frontend/screens/sked_screen/skeds_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'providers/JobProvider.dart';
 import 'screens/reference_screen/reference_screen.dart';
 
 void main() {
@@ -17,7 +16,6 @@ void main() {
         ChangeNotifierProvider(create: (_) => BindingProvider()),
         ChangeNotifierProvider(create: (_) => DepartmentProvider()),
         ChangeNotifierProvider(create: (_) => SkedProvider()),
-        ChangeNotifierProvider(create: (_) => JobProvider()),
         ChangeNotifierProvider(create: (_) => EmployeeProvider()),
       ],
       child: MyApp(),

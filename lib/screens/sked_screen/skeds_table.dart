@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../providers/SkedProvider.dart';
 import '../../providers/DepartmentProvider.dart';
-import '../../providers/JobProvider.dart';
 import '../../providers/EmployeeProvider.dart';
 import 'skeds_table_columns.dart';
 import 'skeds_table_rows.dart';
@@ -28,7 +27,6 @@ class _SkedsTableState extends State<SkedsTable> {
   Widget build(BuildContext context) {
     final skedProvider = Provider.of<SkedProvider>(context);
     final departmentProvider = Provider.of<DepartmentProvider>(context);
-    final jobProvider = Provider.of<JobProvider>(context);
     final employeeProvider = Provider.of<EmployeeProvider>(context);
 
     final filteredSkeds = filterSkeds(
@@ -36,7 +34,6 @@ class _SkedsTableState extends State<SkedsTable> {
       skeds: skedProvider.skeds,
       searchQuery: widget.searchQuery,
       departmentProvider: departmentProvider,
-      jobProvider: jobProvider,
       employeeProvider: employeeProvider,
     );
 
@@ -63,14 +60,12 @@ class _SkedsTableState extends State<SkedsTable> {
                   });
                 }
             ),
-            jobProvider: jobProvider,
             employeeProvider: employeeProvider,
           ),
           rows: buildTableRows(
             context: context,
             skeds: filteredSkeds,
             departmentProvider: departmentProvider,
-            jobProvider: jobProvider,
             employeeProvider: employeeProvider,
           ),
         ),

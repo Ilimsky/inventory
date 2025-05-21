@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../api/ApiService.dart';
 import '../../models/Department.dart';
 import '../../models/Employee.dart';
-import '../../models/Job.dart';
 import '../../models/Sked.dart';
 import '../../providers/SkedProvider.dart';
 
@@ -27,7 +26,6 @@ void showEditSkedDialog(BuildContext context, Sked sked) {
 
   // Значения для выпадающих списков
   int? selectedDepartmentId = sked.departmentId;
-  int? selectedJobId = sked.jobId;
   int? selectedEmployeeId = sked.employeeId;
 
   showDialog(
@@ -109,24 +107,6 @@ void showEditSkedDialog(BuildContext context, Sked sked) {
                   decoration: InputDecoration(labelText: 'Местоположение'),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                 ),
-                FutureBuilder<List<Job>>(
-                  future: ApiService().fetchJobs(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return CircularProgressIndicator();
-                    return DropdownButtonFormField<int>(
-                      value: selectedJobId,
-                      items: snapshot.data!.map((job) {
-                        return DropdownMenuItem<int>(
-                          value: job.id,
-                          child: Text(job.name),
-                        );
-                      }).toList(),
-                      onChanged: (value) =>
-                          setState(() => selectedJobId = value),
-                      decoration: InputDecoration(labelText: 'Должность'),
-                    );
-                  },
-                ),
                 FutureBuilder<List<Employee>>(
                   future: ApiService().fetchEmployees(),
                   builder: (context, snapshot) {
@@ -164,7 +144,6 @@ void showEditSkedDialog(BuildContext context, Sked sked) {
                   sked.id,
                   skedNumber: int.parse(skedNumberController.text),
                   departmentId: selectedDepartmentId!,
-                  jobId: selectedJobId!,
                   employeeId: selectedEmployeeId!,
                   dateReceived: DateFormat('yyyy-MM-dd')
                       .parse(dateReceivedController.text),

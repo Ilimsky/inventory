@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../../models/Sked.dart';
 import '../../models/Department.dart';
-import '../../models/Job.dart';
 import '../../models/Employee.dart';
 import '../../providers/DepartmentProvider.dart';
-import '../../providers/JobProvider.dart';
 import '../../providers/EmployeeProvider.dart';
 
 List<Sked> filterSkeds({
@@ -15,7 +12,6 @@ List<Sked> filterSkeds({
   required List<Sked> skeds,
   required String searchQuery,
   required DepartmentProvider departmentProvider,
-  required JobProvider jobProvider,
   required EmployeeProvider employeeProvider,
 }) {
   if (searchQuery.isEmpty) return skeds;
@@ -26,10 +22,6 @@ List<Sked> filterSkeds({
     final department = departmentProvider.departments.firstWhere(
           (d) => d.id == sked.departmentId,
       orElse: () => Department(id: 0, name: ''),
-    );
-    final job = jobProvider.jobs.firstWhere(
-          (j) => j.id == sked.jobId,
-      orElse: () => Job(id: 0, name: ''),
     );
     final employee = employeeProvider.employees.firstWhere(
           (e) => e.id == sked.employeeId,
@@ -48,7 +40,6 @@ List<Sked> filterSkeds({
         sked.place.toLowerCase().contains(query) ||
         sked.comments.toLowerCase().contains(query) ||
         department.name.toLowerCase().contains(query) ||
-        job.name.toLowerCase().contains(query) ||
         employee.name.toLowerCase().contains(query);
   }).toList();
 }

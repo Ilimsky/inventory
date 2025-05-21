@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../providers/JobProvider.dart';
 import '../../providers/EmployeeProvider.dart';
 
 List<DataColumn> buildTableColumns({
   required BuildContext context,
   required Function(int, bool) onSort,
-  required JobProvider jobProvider,
   required EmployeeProvider employeeProvider,
 }) {
   return [
@@ -45,10 +42,6 @@ List<DataColumn> buildTableColumns({
     ),
     DataColumn(
       label: _buildColumnLabel('Местоположение', 70),
-      onSort: (i, asc) => onSort(i, asc),
-    ),
-    DataColumn(
-      label: _buildColumnLabel('Должность', 120),
       onSort: (i, asc) => onSort(i, asc),
     ),
     DataColumn(
