@@ -23,6 +23,7 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
   DateTime? selectedDateCreated;
 
   // Контроллеры для текстовых полей
+  final TextEditingController _assetCategoryController = TextEditingController();
   final TextEditingController _dateReceivedController = TextEditingController();
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _countController = TextEditingController();
@@ -113,7 +114,25 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10), // Отступ между элементами
+                SizedBox(width: 10),
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _assetCategoryController,
+                        decoration: InputDecoration(
+                          labelText: 'Категория',
+                          labelStyle: TextStyle(fontSize: 14),
+                          border: InputBorder.none,
+                        ),
+                        style: TextStyle(fontSize: 14),
+                        keyboardType: TextInputType.text,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
                 Expanded(
                   child: InkWell(
                     onTap: () =>
@@ -303,6 +322,7 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                           await skedProvider.createSked(
                             departmentId: selectedDepartmentId!,
                             employeeId: selectedEmployeeId!,
+                            assetCategory: _assetCategoryController.text,
                             dateReceived: selectedDateReceived!,
                             itemName: _itemNameController.text,
                             count: int.tryParse(_countController.text) ?? 0,

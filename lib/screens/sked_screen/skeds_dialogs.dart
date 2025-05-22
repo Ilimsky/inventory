@@ -14,6 +14,7 @@ void showEditSkedDialog(BuildContext context, Sked sked) {
   // Контроллеры для текстовых полей
   final skedNumberController =
       TextEditingController(text: sked.skedNumber.toString());
+  final assetCategoryController = TextEditingController(text: sked.assetCategory);
   final dateReceivedController = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(sked.dateReceived));
   final itemNameController = TextEditingController(text: sked.itemName);
@@ -57,6 +58,11 @@ void showEditSkedDialog(BuildContext context, Sked sked) {
                   },
                 ),
 
+                TextField(
+                  controller: assetCategoryController,
+                  decoration: InputDecoration(labelText: 'Категория'),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                ),
                 TextField(
                   controller: dateReceivedController,
                   decoration: InputDecoration(
@@ -145,6 +151,7 @@ void showEditSkedDialog(BuildContext context, Sked sked) {
                   skedNumber: int.parse(skedNumberController.text),
                   departmentId: selectedDepartmentId!,
                   employeeId: selectedEmployeeId!,
+                  assetCategory: assetCategoryController.text,
                   dateReceived: DateFormat('yyyy-MM-dd')
                       .parse(dateReceivedController.text),
                   itemName: itemNameController.text,

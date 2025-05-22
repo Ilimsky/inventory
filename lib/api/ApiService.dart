@@ -7,9 +7,9 @@ import '../models/Binding.dart';
 import '../models/Sked.dart';
 
 class ApiService {
-  // final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8060/api'));
-  final Dio _dio =
-      Dio(BaseOptions(baseUrl: 'https://inventory-3z06.onrender.com/api'));
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8060/api'));
+
+  // final Dio _dio =       Dio(BaseOptions(baseUrl: 'https://inventory-3z06.onrender.com/api'));
 
   Future<List<Department>> fetchDepartments() async {
     try {
@@ -63,24 +63,27 @@ class ApiService {
     }
   }
 
-  Future<Sked> createSked(
-      {required int departmentId,
-      required int employeeId,
-      required DateTime dateReceived,
-      required String itemName,
-      required String serialNumber,
-      required int count,
-      required String measure,
-      required double price,
-      required String place,
-      required String comments,
-      }) async {
+  Future<Sked> createSked({
+    required int departmentId,
+    required int employeeId,
+    required String assetCategory,
+    required DateTime dateReceived,
+    required String itemName,
+    required String serialNumber,
+    required int count,
+    required String measure,
+    required double price,
+    required String place,
+    required String comments,
+  }) async {
     try {
       final response = await _dio.post(
         '/skeds',
         data: {
           'departmentId': departmentId,
           'employeeId': employeeId,
+
+          'assetCategory': assetCategory,
           'dateReceived': DateFormat('yyyy-MM-dd').format(dateReceived),
           'itemName': itemName,
           'serialNumber': serialNumber,
@@ -108,24 +111,27 @@ class ApiService {
     }
   }
 
-  Future<Sked> updateSked(int skedId,
-      {required int skedNumber,
-      required int departmentId,
-      required int employeeId,
-      required DateTime dateReceived,
-      required String itemName,
-      required String serialNumber,
-      required int count,
-      required String measure,
-      required double price,
-      required String place,
-      required String comments,
-      }) async {
+  Future<Sked> updateSked(
+    int skedId, {
+    required int skedNumber,
+    required int departmentId,
+    required int employeeId,
+    required String assetCategory,
+    required DateTime dateReceived,
+    required String itemName,
+    required String serialNumber,
+    required int count,
+    required String measure,
+    required double price,
+    required String place,
+    required String comments,
+  }) async {
     try {
       final requestData = {
         'skedNumber': skedNumber,
         'departmentId': departmentId,
         'employeeId': employeeId,
+        'assetCategory': assetCategory,
         'dateReceived': DateFormat('yyyy-MM-dd').format(dateReceived),
         'itemName': itemName,
         'serialNumber': serialNumber,

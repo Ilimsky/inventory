@@ -13,6 +13,10 @@ List<DataColumn> buildTableColumns({
       onSort: (i, asc) => onSort(i, asc),
     ),
     DataColumn(
+      label: _buildColumnLabel('Категория', 80),
+      onSort: (i, asc) => onSort(i, asc),
+    ),
+    DataColumn(
       label: _buildColumnLabel('Дата занесения', 65),
       onSort: (i, asc) => onSort(i, asc),
     ),

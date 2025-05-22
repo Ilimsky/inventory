@@ -32,6 +32,7 @@ List<DataRow> buildTableRows({
 
     return DataRow(cells: [
       _buildDataCell(rowNumber.toString(), 20, 1),
+      _buildDataCell(sked.assetCategory, 80, 1),
       _buildDataCell(dateFormat.format(sked.dateReceived), 65, 1),
       _buildDataCell('${department.name}/${sked.skedNumber.toString().padLeft(6, '0')}', 70, 1),
       _buildDataCell(sked.itemName, 180, 4),

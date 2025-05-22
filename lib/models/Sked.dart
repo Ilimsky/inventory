@@ -5,6 +5,7 @@ class Sked {
   final int departmentId;
   final int employeeId;
 
+  final String assetCategory;
   DateTime dateReceived;
   final int skedNumber;
   final String itemName;
@@ -20,6 +21,7 @@ class Sked {
     required this.skedNumber,
     required this.departmentId,
     required this.employeeId,
+    required this.assetCategory,
     required this.dateReceived,
     required this.itemName,
     required this.serialNumber,
@@ -36,6 +38,7 @@ class Sked {
       skedNumber: json['skedNumber'],
       departmentId: json['departmentId'],
       employeeId: json['employeeId'],
+      assetCategory: json['assetCategory'],
       dateReceived: DateTime.parse(json['dateReceived']),
       itemName: json['itemName'],
       serialNumber: json['serialNumber'],
@@ -53,6 +56,8 @@ class Sked {
       'skedNumber': skedNumber,
       'departmentId': departmentId,
       'employeeId': employeeId,
+
+      'assetCategory': assetCategory,
       'dateReceived': DateFormat('yyyy-MM-dd').format(dateReceived),
       'itemName': itemName,
       'serialNumber': serialNumber,

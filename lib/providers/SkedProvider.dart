@@ -30,27 +30,10 @@ class SkedProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchAllSkeds() async {
-    if (_isLoading) return;
-
-    try {
-      _startLoading();
-      _currentDepartmentId = null;
-
-      final response = await ApiService().fetchAllSkeds();
-      _skeds = response;
-      _clearError();
-    } catch (e) {
-      _handleError('Failed to load all skeds', e);
-    } finally {
-      _stopLoading();
-    }
-  }
-
-
   Future<Sked> createSked({
     required int departmentId,
     required int employeeId,
+    required String assetCategory,
     required DateTime dateReceived,
     required String itemName,
     required String serialNumber,
@@ -66,6 +49,7 @@ class SkedProvider extends ChangeNotifier {
       final newSked = await ApiService().createSked(
         departmentId: departmentId,
         employeeId: employeeId,
+        assetCategory: assetCategory,
         dateReceived: dateReceived,
         itemName: itemName,
         serialNumber: serialNumber,
@@ -89,11 +73,30 @@ class SkedProvider extends ChangeNotifier {
     }
   }
 
+
+  Future<void> fetchAllSkeds() async {
+    if (_isLoading) return;
+
+    try {
+      _startLoading();
+      _currentDepartmentId = null;
+
+      final response = await ApiService().fetchAllSkeds();
+      _skeds = response;
+      _clearError();
+    } catch (e) {
+      _handleError('Failed to load all skeds', e);
+    } finally {
+      _stopLoading();
+    }
+  }
+
   Future<Sked> updateSked(
       int skedId, {
         required int skedNumber,
         required int departmentId,
         required int employeeId,
+        required String assetCategory,
         required DateTime dateReceived,
         required String itemName,
         required String serialNumber,
@@ -111,6 +114,7 @@ class SkedProvider extends ChangeNotifier {
         skedNumber: skedNumber,
         departmentId: departmentId,
         employeeId: employeeId,
+        assetCategory: assetCategory,
         dateReceived: dateReceived,
         itemName: itemName,
         serialNumber: serialNumber,
