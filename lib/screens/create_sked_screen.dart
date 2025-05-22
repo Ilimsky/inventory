@@ -21,17 +21,21 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
   Employee? selectedEmployee;
   DateTime? selectedDateReceived;
   DateTime? selectedDateCreated;
+  String selectedCategory = 'ОСиМБП';
+  String selectedMeasure = 'шт.';
+  String selectedPlace = 'Клиентская';
+
 
   // Контроллеры для текстовых полей
-  final TextEditingController _assetCategoryController = TextEditingController();
+  // final TextEditingController _assetCategoryController = TextEditingController();
   final TextEditingController _dateReceivedController = TextEditingController();
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _countController = TextEditingController();
   final TextEditingController _dateApprovedController = TextEditingController();
   final TextEditingController _serialNumberController = TextEditingController();
-  final TextEditingController _measureController = TextEditingController();
+  // final TextEditingController _measureController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _placeController = TextEditingController();
+  // final TextEditingController _placeController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
 
   // Состояние для отображения полей просмотра
@@ -66,7 +70,7 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
     _countController.dispose();
     _dateApprovedController.dispose();
     _serialNumberController.dispose();
-    _measureController.dispose();
+    // _measureController.dispose();
     _priceController.dispose();
     _commentsController.dispose();
     super.dispose();
@@ -77,6 +81,7 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
     final departmentProvider = Provider.of<DepartmentProvider>(context);
     final employeeProvider = Provider.of<EmployeeProvider>(context);
     final skedProvider = Provider.of<SkedProvider>(context);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -114,25 +119,41 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                // SizedBox(width: 10),
                 Expanded(
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: _assetCategoryController,
+                      child:
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
                         decoration: InputDecoration(
                           labelText: 'Категория',
                           labelStyle: TextStyle(fontSize: 14),
                           border: InputBorder.none,
                         ),
-                        style: TextStyle(fontSize: 14),
-                        keyboardType: TextInputType.text,
+                        value: selectedCategory,
+                        items: ['ОСиМБП', 'Техника', 'Проверочный инвентарь']
+                            .map((category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(
+                            category,
+                            style: TextStyle(fontSize: 14),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCategory = value!;
+                          });
+                        },
                       ),
+
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                // SizedBox(width: 10),
                 Expanded(
                   child: InkWell(
                     onTap: () =>
@@ -158,7 +179,7 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10), // Отступ между элементами
+                // SizedBox(width: 10), // Отступ между элементами
                 Expanded(
                   child: Card(
                     child: Padding(
@@ -176,7 +197,7 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10), // Отступ между элементами
+                // SizedBox(width: 10), // Отступ между элементами
                 Expanded(
                   child: Card(
                     child: Padding(
@@ -193,7 +214,7 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10), // Отступ между элементами
+                // SizedBox(width: 10), // Отступ между элементами
                 Expanded(
                   child: Card(
                     child: Padding(
@@ -214,15 +235,32 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: _measureController,
+                      child:
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
                         decoration: InputDecoration(
-                          labelText: 'Единица измерения',
+                          labelText: 'Ед. изм.',
                           labelStyle: TextStyle(fontSize: 14),
                           border: InputBorder.none,
                         ),
-                        style: TextStyle(fontSize: 14),
+                        value: selectedMeasure,
+                        items: ['шт.', 'пачка', 'литр']
+                            .map((category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(
+                            category,
+                            style: TextStyle(fontSize: 14),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedMeasure = value!;
+                          });
+                        },
                       ),
+
                     ),
                   ),
                 ),
@@ -251,15 +289,32 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: _placeController,
+                      child:
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
                         decoration: InputDecoration(
                           labelText: 'Местоположение',
                           labelStyle: TextStyle(fontSize: 14),
                           border: InputBorder.none,
                         ),
-                        style: TextStyle(fontSize: 14),
+                        value: selectedPlace,
+                        items: ['Клиентская', 'Операционная', 'Хранилище', 'Прихожая', 'Директорская', 'Кухня', 'Балкон']
+                            .map((category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(
+                            category,
+                            style: TextStyle(fontSize: 14),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedPlace = value!;
+                          });
+                        },
                       ),
+
                     ),
                   ),
                 ),
@@ -322,14 +377,14 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                           await skedProvider.createSked(
                             departmentId: selectedDepartmentId!,
                             employeeId: selectedEmployeeId!,
-                            assetCategory: _assetCategoryController.text,
+                            assetCategory: selectedCategory,
                             dateReceived: selectedDateReceived!,
                             itemName: _itemNameController.text,
                             count: int.tryParse(_countController.text) ?? 0,
                             serialNumber: _serialNumberController.text,
-                            measure: _measureController.text,
+                            measure: selectedMeasure,
                             price: double.tryParse(_priceController.text) ?? 0.0,
-                            place: _placeController.text,
+                            place: selectedPlace,
                             comments: _commentsController.text,
                           );
 
@@ -365,14 +420,15 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
                         if (_showViewFields) {
                           // Добавляем текущие значения в список для отображения
                           _viewFields.add({
+                            'Категория': selectedCategory ?? 'Не выбрано',
                             'Филиал': selectedDepartment?.name ?? 'Не выбран',
                             'Дата внесения': _dateReceivedController.text,
                             'Наименование': _itemNameController.text,
                             'Серийный номер': _serialNumberController.text,
                             'Кол-во': _countController.text,
-                            'Ед. изм.': _measureController.text,
+                            'Ед. изм.': selectedMeasure,
                             'Стоимость': _priceController.text,
-                            'Местоположение': _placeController.text,
+                            'Местоположение': selectedPlace,
                             'Сотрудник': selectedEmployee?.name ?? 'Не выбран',
                             'Комментарии': _commentsController.text,
                           });
@@ -403,14 +459,15 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
       selectedDepartmentId = null;
       selectedEmployeeId = null;
       selectedDateReceived = null;
+      // selectedCategory = null;
       _dateReceivedController.clear();
       _itemNameController.clear();
       _countController.clear();
       _dateApprovedController.clear();
       _serialNumberController.clear();
-      _measureController.clear();
+      // _measureController.clear();
       _priceController.clear();
-      _placeController.clear();
+      // _placeController.clear();
       _commentsController.clear();
     });
   }

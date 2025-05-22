@@ -13,7 +13,7 @@ List<DataColumn> buildTableColumns({
       onSort: (i, asc) => onSort(i, asc),
     ),
     DataColumn(
-      label: _buildColumnLabel('Категория', 80),
+      label: _buildColumnLabel('Категория', 65),
       onSort: (i, asc) => onSort(i, asc),
     ),
     DataColumn(
