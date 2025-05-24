@@ -4,7 +4,6 @@ class Sked {
   final int id;
   final int departmentId;
   final int employeeId;
-
   final String assetCategory;
   DateTime dateReceived;
   final int skedNumber;

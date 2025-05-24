@@ -1,8 +1,15 @@
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import '../api/ApiService.dart';
+import '../models/Department.dart';
 import '../models/Sked.dart';
+import 'DepartmentProvider.dart';
 
 class SkedProvider extends ChangeNotifier {
+  late final DepartmentProvider departmentProvider; // <- Добавляем зависимость
+  SkedProvider({required this.departmentProvider});
+
+
   List<Sked> _skeds = [];
   bool _isLoading = false;
   String? _errorMessage;
@@ -12,6 +19,7 @@ class SkedProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   int? get currentDepartmentId => _currentDepartmentId;
+
 
   Future<void> fetchSkedsByDepartment(int departmentId) async {
     if (_isLoading || _currentDepartmentId == departmentId) return;
@@ -72,7 +80,6 @@ class SkedProvider extends ChangeNotifier {
       _stopLoading();
     }
   }
-
 
   Future<void> fetchAllSkeds() async {
     if (_isLoading) return;
@@ -185,5 +192,84 @@ class SkedProvider extends ChangeNotifier {
   void clearError() {
     _skeds = [];
     notifyListeners();
+  }
+
+  Future<Sked> moveSkedToDepartment({
+    required int skedId,
+    required int newDepartmentId,
+    required DateTime newDateReceived,
+    required String newPlace,
+    required int newEmployeeId,
+  }) async {
+    try {
+      _startLoading();
+
+      final sked = _skeds.firstWhere((s) => s.id == skedId);
+
+      // Проверка на повторное перемещение
+      if (sked.comments.contains('Перемещено')) {
+        throw Exception('Это имущество уже было перемещено ранее!');
+      }
+
+      final departments = departmentProvider.departments;
+
+      final fromDepartment = departments.firstWhere(
+            (d) => d.id == sked.departmentId,
+        orElse: () => Department(id: sked.departmentId, name: 'ID ${sked.departmentId}'),
+      );
+
+      final toDepartment = departments.firstWhere(
+            (d) => d.id == newDepartmentId,
+        orElse: () => Department(id: newDepartmentId, name: 'ID $newDepartmentId}'),
+      );
+
+      // Создаём новую запись с обновлёнными данными
+      final movedSked = await ApiService().createSked(
+        departmentId: newDepartmentId,
+        employeeId: newEmployeeId, // Новый сотрудник
+        assetCategory: sked.assetCategory,
+        dateReceived: newDateReceived, // Новая дата
+        itemName: sked.itemName,
+        serialNumber: sked.serialNumber,
+        count: sked.count,
+        measure: sked.measure,
+        price: sked.price,
+        place: newPlace, // Новое местоположение
+        comments: 'Перемещено из ${fromDepartment.name}. ${sked.comments}',
+      );
+
+      // Обновляем исходную запись
+      final updatedSked = await ApiService().updateSked(
+        skedId,
+        skedNumber: sked.skedNumber,
+        departmentId: sked.departmentId,
+        employeeId: sked.employeeId,
+        assetCategory: sked.assetCategory,
+        dateReceived: sked.dateReceived,
+        itemName: sked.itemName,
+        serialNumber: sked.serialNumber,
+        count: sked.count,
+        measure: sked.measure,
+        price: sked.price,
+        place: sked.place,
+        comments: 'Перемещено в ${toDepartment.name}. ${sked.comments}',
+      );
+
+      // Обновляем локальные данные
+      final index = _skeds.indexWhere((s) => s.id == skedId);
+      if (index != -1) {
+        _skeds[index] = updatedSked;
+      }
+      _skeds.add(movedSked);
+
+      _clearError();
+      notifyListeners();
+      return movedSked;
+    } catch (e) {
+      _handleError('Ошибка перемещения SKED $skedId: $e', e);
+      rethrow;
+    } finally {
+      _stopLoading();
+    }
   }
 }

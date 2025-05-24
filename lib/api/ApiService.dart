@@ -11,41 +11,13 @@ class ApiService {
 
   // final Dio _dio =       Dio(BaseOptions(baseUrl: 'https://inventory-3z06.onrender.com/api'));
 
-  Future<List<Department>> fetchDepartments() async {
-    try {
-      final response = await _dio.get('/departments');
-      return (response.data as List)
-          .map((json) => Department.fromJson(json))
-          .toList();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<Department> createDepartment(String name) async {
-    try {
-      final response = await _dio.post('/departments', data: {'name': name});
-      return Department.fromJson(response.data);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> deleteDepartment(int id) async {
-    try {
-      await _dio.delete('/departments/$id');
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<List<Sked>> fetchAllSkeds() async {
     try {
       final response = await _dio.get(
         '/skeds',
         options: Options(
           validateStatus: (status) =>
-              status! < 500, // Не выбрасывать исключение для статусов < 500
+          status! < 500, // Не выбрасывать исключение для статусов < 500
         ),
       );
 
@@ -112,20 +84,20 @@ class ApiService {
   }
 
   Future<Sked> updateSked(
-    int skedId, {
-    required int skedNumber,
-    required int departmentId,
-    required int employeeId,
-    required String assetCategory,
-    required DateTime dateReceived,
-    required String itemName,
-    required String serialNumber,
-    required int count,
-    required String measure,
-    required double price,
-    required String place,
-    required String comments,
-  }) async {
+      int skedId, {
+        required int skedNumber,
+        required int departmentId,
+        required int employeeId,
+        required String assetCategory,
+        required DateTime dateReceived,
+        required String itemName,
+        required String serialNumber,
+        required int count,
+        required String measure,
+        required double price,
+        required String place,
+        required String comments,
+      }) async {
     try {
       final requestData = {
         'skedNumber': skedNumber,
@@ -154,19 +126,47 @@ class ApiService {
     }
   }
 
-  Future<Department> updateDepartment(int id, String newName) async {
+  Future<void> deleteSked(int skedId) async {
     try {
-      final response =
-          await _dio.put('/departments/$id', data: {'name': newName});
+      await _dio.delete('/skeds/$skedId');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Department>> fetchDepartments() async {
+    try {
+      final response = await _dio.get('/departments');
+      return (response.data as List)
+          .map((json) => Department.fromJson(json))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Department> createDepartment(String name) async {
+    try {
+      final response = await _dio.post('/departments', data: {'name': name});
       return Department.fromJson(response.data);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> deleteSked(int skedId) async {
+  Future<void> deleteDepartment(int id) async {
     try {
-      await _dio.delete('/skeds/$skedId');
+      await _dio.delete('/departments/$id');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Department> updateDepartment(int id, String newName) async {
+    try {
+      final response =
+          await _dio.put('/departments/$id', data: {'name': newName});
+      return Department.fromJson(response.data);
     } catch (e) {
       rethrow;
     }
@@ -210,7 +210,6 @@ class ApiService {
     }
   }
 
-  // Метод для получения всех привязок сотрудников к филиалам
   Future<List<Binding>> fetchBindings() async {
     try {
       final response = await _dio.get('/employee-departments');
@@ -222,7 +221,6 @@ class ApiService {
     }
   }
 
-// Метод для создания привязки сотрудника к филиалу
   Future<Binding> createBinding({
     required int employeeId,
     required int departmentId,

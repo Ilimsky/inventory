@@ -6,6 +6,8 @@ import '../../api/ApiService.dart';
 import '../../models/Department.dart';
 import '../../models/Employee.dart';
 import '../../models/Sked.dart';
+import '../../providers/DepartmentProvider.dart';
+import '../../providers/EmployeeProvider.dart';
 import '../../providers/SkedProvider.dart';
 
 void showEditSkedDialog(BuildContext context, Sked sked) {
@@ -195,5 +197,116 @@ void showDeleteSkedDialog(BuildContext context, int skedId) {
         ),
       ],
     ),
+  );
+}
+
+void showMoveSkedDialog(BuildContext context, Sked sked) {
+  final departmentProvider = Provider.of<DepartmentProvider>(context, listen: false);
+  final employeeProvider = Provider.of<EmployeeProvider>(context, listen: false);
+
+  // Значения по умолчанию
+  int? selectedDepartmentId;
+  DateTime newDate = DateTime.now();
+  String newPlace = sked.place;
+  int? selectedEmployeeId = sked.employeeId;
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Переместить имущество'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<int>(
+                    hint: Text('Выберите новый филиал'),
+                    value: selectedDepartmentId,
+                    onChanged: (value) => setState(() => selectedDepartmentId = value),
+                    items: departmentProvider.departments
+                        .where((d) => d.id != sked.departmentId)
+                        .map((d) => DropdownMenuItem(
+                      value: d.id,
+                      child: Text(d.name),
+                    ))
+                        .toList(),
+                  ),
+                  SizedBox(height: 16),
+                  InkWell(
+                    onTap: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: newDate,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now(),
+                      );
+                      if (date != null) {
+                        setState(() => newDate = date);
+                      }
+                    },
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: 'Дата перемещения',
+                      ),
+                      child: Text(DateFormat('dd.MM.yyyy').format(newDate)),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Новое местоположение',
+                    ),
+                    initialValue: newPlace,
+                    onChanged: (value) => newPlace = value,
+                  ),
+                  SizedBox(height: 16),
+                  DropdownButtonFormField<int>(
+                    hint: Text('Ответственный сотрудник'),
+                    value: selectedEmployeeId,
+                    onChanged: (value) => setState(() => selectedEmployeeId = value),
+                    items: employeeProvider.employees
+                        .map((e) => DropdownMenuItem(
+                      value: e.id,
+                      child: Text(e.name),
+                    ))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Отмена'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (selectedDepartmentId != null && selectedEmployeeId != null) {
+                    Navigator.pop(context);
+                    try {
+                      await Provider.of<SkedProvider>(context, listen: false)
+                          .moveSkedToDepartment(
+                        skedId: sked.id,
+                        newDepartmentId: selectedDepartmentId!,
+                        newDateReceived: newDate,
+                        newPlace: newPlace,
+                        newEmployeeId: selectedEmployeeId!,
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  }
+                },
+                child: Text('Подтвердить перемещение'),
+              ),
+            ],
+          );
+        },
+      );
+    },
   );
 }

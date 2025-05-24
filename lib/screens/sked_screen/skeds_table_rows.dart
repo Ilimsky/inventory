@@ -18,7 +18,8 @@ List<DataRow> buildTableRows({
 
   return skeds.asMap().entries.map((entry) {
     final sked = entry.value;
-    final rowNumber = entry.key + 1; // Нумерация с 1
+    final rowNumber = entry.key + 1;
+    final isMoved = sked.comments.contains('Перемещено в');
 
     final department = departmentProvider.departments.firstWhere(
           (d) => d.id == sked.departmentId,
@@ -30,30 +31,44 @@ List<DataRow> buildTableRows({
       orElse: () => Employee(id: 0, name: 'Неизвестно'),
     );
 
-    return DataRow(cells: [
-      _buildDataCell(rowNumber.toString(), 20, 1),
-      _buildDataCell(sked.assetCategory, 80, 1),
-      _buildDataCell(dateFormat.format(sked.dateReceived), 65, 1),
-      _buildDataCell('${department.name}/${sked.skedNumber.toString().padLeft(6, '0')}', 70, 1),
-      _buildDataCell(sked.itemName, 180, 4),
-      _buildDataCell(sked.serialNumber, 120, 1),
-      _buildDataCell(sked.count.toString(), 30, 1),
-      _buildDataCell(sked.measure, 30, 1),
-      _buildDataCell(sked.price.toString(), 70, 1),
-      _buildDataCell(sked.place.toString(), 70, 1),
-      _buildDataCell(employee.name, 120, 1),
-      _buildDataCell(sked.comments, 150, 3),
-      _buildActionsCell(context, sked, department, employee),
-    ]);
+    return DataRow(
+      // Добавляем цвет фона для строки
+      color: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) {
+          if (isMoved) {
+            return Colors.red.withOpacity(0.2); // Полупрозрачный красный
+          }
+          return null; // Использовать цвет по умолчанию
+        },
+      ),
+      cells: [
+        _buildDataCell(rowNumber.toString(), 20, 1, isMoved),
+        _buildDataCell(sked.assetCategory, 80, 1, isMoved),
+        _buildDataCell(dateFormat.format(sked.dateReceived), 65, 1, isMoved),
+        _buildDataCell('${department.name}/${sked.skedNumber.toString().padLeft(6, '0')}', 70, 1, isMoved),
+        _buildDataCell(sked.itemName, 180, 4, isMoved),
+        _buildDataCell(sked.serialNumber, 120, 1, isMoved),
+        _buildDataCell(sked.count.toString(), 30, 1, isMoved),
+        _buildDataCell(sked.measure, 30, 1, isMoved),
+        _buildDataCell(sked.price.toString(), 70, 1, isMoved),
+        _buildDataCell(sked.place.toString(), 70, 1, isMoved),
+        _buildDataCell(employee.name, 120, 1, isMoved),
+        _buildDataCell(sked.comments, 150, 3, isMoved),
+        _buildActionsCell(context, sked, department, employee),
+      ],
+    );
   }).toList();
 }
 
-DataCell _buildDataCell(String text, double width, int maxLines) {
+DataCell _buildDataCell(String text, double width, int maxLines, bool isMoved) {
   return DataCell(Container(
     width: width,
     child: Text(
       text,
-      style: TextStyle(fontSize: 12),
+      style: TextStyle(
+        fontSize: 12,
+        color: isMoved ? Colors.red : null, // Красный текст для перемещенных
+      ),
       overflow: TextOverflow.ellipsis,
       maxLines: maxLines,
       textAlign: TextAlign.center,
@@ -62,6 +77,7 @@ DataCell _buildDataCell(String text, double width, int maxLines) {
   ));
 }
 
+// В функции _buildActionsCell
 DataCell _buildActionsCell(
     BuildContext context,
     Sked sked,
@@ -70,7 +86,7 @@ DataCell _buildActionsCell(
     ) {
   return DataCell(
     Container(
-      width: 60,
+      width: 90, // Увеличиваем ширину для третьей кнопки
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -79,6 +95,12 @@ DataCell _buildActionsCell(
             padding: EdgeInsets.zero,
             constraints: BoxConstraints(),
             onPressed: () => showEditSkedDialog(context, sked),
+          ),
+          IconButton(
+            icon: Icon(Icons.move_to_inbox, size: 16), // Иконка перемещения
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(),
+            onPressed: () => showMoveSkedDialog(context, sked),
           ),
           IconButton(
             icon: Icon(Icons.delete, size: 16),
