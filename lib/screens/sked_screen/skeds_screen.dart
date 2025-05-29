@@ -50,16 +50,16 @@ class _SkedsScreenState extends State<SkedsScreen> {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: row.map((sked) {
                   // Получаем название отдела
-                  final department = departmentProvider.departments.firstWhere(
-                        (d) => d.id == sked.departmentId,
-                    orElse: () => Department(id: 0, name: 'Неизвестно'),
-                  );
+                  // final department = departmentProvider.departments.firstWhere(
+                  //       (d) => d.id == sked.departmentId,
+                  //   orElse: () => Department(id: 0, name: 'Неизвестно'),
+                  // );
 
                   // Формируем инвентарный номер
-                  final inventoryNumber = '${department.name}/${sked.skedNumber.toString().padLeft(6, '0')}';
+                  // final inventoryNumber = '${department.name}/${sked.skedNumber.toString().padLeft(6, '0')}';
 
                   final qrData = '''
-Инвентарный номер: $inventoryNumber
+Инвентарный номер: $sked.skedNumber
 Наименование: ${sked.itemName}
 Серийный номер: ${sked.serialNumber}
 ID: ${sked.id}
@@ -76,7 +76,7 @@ ID: ${sked.id}
                         child: pw.Column(
                           mainAxisSize: pw.MainAxisSize.min,
                           children: [
-                            pw.Text(inventoryNumber,
+                            pw.Text(sked.skedNumber,
                                 style: pw.TextStyle(font: fontBold)),
                             pw.SizedBox(height: 5),
                             pw.BarcodeWidget(

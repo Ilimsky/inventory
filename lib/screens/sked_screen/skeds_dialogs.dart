@@ -150,7 +150,7 @@ void showEditSkedDialog(BuildContext context, Sked sked) {
               onPressed: () {
                 skedProvider.updateSked(
                   sked.id,
-                  skedNumber: int.parse(skedNumberController.text),
+                  skedNumber: skedNumberController.text,
                   departmentId: selectedDepartmentId!,
                   employeeId: selectedEmployeeId!,
                   assetCategory: assetCategoryController.text,

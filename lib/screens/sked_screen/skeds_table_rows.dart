@@ -48,7 +48,7 @@ List<DataRow> buildTableRows({
         _buildDataCell(rowNumber.toString(), 20, 1, isMoved, isWrittenOff),
         _buildDataCell(sked.assetCategory, 80, 1, isMoved, isWrittenOff),
         _buildDataCell(dateFormat.format(sked.dateReceived), 65, 1, isMoved, isWrittenOff),
-        _buildDataCell('${department.name}/${sked.skedNumber.toString().padLeft(6, '0')}', 70, 1, isMoved, isWrittenOff),
+        _buildDataCell(sked.skedNumber, 70, 1, isMoved, isWrittenOff),
         _buildDataCell(sked.itemName, 180, 4, isMoved, isWrittenOff),
         _buildDataCell(sked.serialNumber, 120, 1, isMoved, isWrittenOff),
         _buildDataCell(sked.count.toString(), 30, 1, isMoved, isWrittenOff),

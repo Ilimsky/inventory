@@ -6,7 +6,7 @@ class Sked {
   final int employeeId;
   final String assetCategory;
   DateTime dateReceived;
-  final int skedNumber;
+  final String skedNumber;
   final String itemName;
   final String serialNumber;
   final int count;
@@ -37,18 +37,18 @@ class Sked {
   factory Sked.fromJson(Map<String, dynamic> json) {
     return Sked(
       id: json['id'],
-      skedNumber: json['skedNumber'],
+      skedNumber: json['skedNumber'] as String? ?? '',
       departmentId: json['departmentId'],
       employeeId: json['employeeId'],
-      assetCategory: json['assetCategory'],
+      assetCategory: json['assetCategory'] as String? ?? '',
       dateReceived: DateTime.parse(json['dateReceived']),
-      itemName: json['itemName'],
-      serialNumber: json['serialNumber'],
+      itemName: json['itemName'] as String? ?? '',
+      serialNumber: json['serialNumber'] as String? ?? '',
       count: json['count'],
-      measure: json['measure'],
-      price: json['price'].toDouble(),
-      place: json['place'],
-      comments: json['comments'],
+      measure: json['measure'] as String? ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      place: json['place'] as String? ?? '',
+      comments: json['comments'] as String? ?? '',
       isWrittenOff: json['isWrittenOff'] as bool? ?? false, // Безопасное приведение типа
     );
   }
@@ -70,7 +70,6 @@ class Sked {
       'place': place,
       'comments': comments,
       'isWrittenOff': isWrittenOff,
-
     };
   }
 }

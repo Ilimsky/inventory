@@ -27,15 +27,12 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
 
 
   // Контроллеры для текстовых полей
-  // final TextEditingController _assetCategoryController = TextEditingController();
   final TextEditingController _dateReceivedController = TextEditingController();
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _countController = TextEditingController();
   final TextEditingController _dateApprovedController = TextEditingController();
   final TextEditingController _serialNumberController = TextEditingController();
-  // final TextEditingController _measureController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  // final TextEditingController _placeController = TextEditingController();
   final TextEditingController _commentsController = TextEditingController();
 
   // Состояние для отображения полей просмотра
@@ -70,7 +67,6 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
     _countController.dispose();
     _dateApprovedController.dispose();
     _serialNumberController.dispose();
-    // _measureController.dispose();
     _priceController.dispose();
     _commentsController.dispose();
     super.dispose();
@@ -459,15 +455,12 @@ class _CreateSkedScreenState extends State<CreateSkedScreen> {
       selectedDepartmentId = null;
       selectedEmployeeId = null;
       selectedDateReceived = null;
-      // selectedCategory = null;
       _dateReceivedController.clear();
       _itemNameController.clear();
       _countController.clear();
       _dateApprovedController.clear();
       _serialNumberController.clear();
-      // _measureController.clear();
       _priceController.clear();
-      // _placeController.clear();
       _commentsController.clear();
     });
   }

@@ -19,6 +19,75 @@ class SkedProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   int? get currentDepartmentId => _currentDepartmentId;
 
+  Future<Sked> updateSked(
+      int skedId, {
+        required String skedNumber,
+        required int departmentId,
+        required int employeeId,
+        required String assetCategory,
+        required DateTime dateReceived,
+        required String itemName,
+        required String serialNumber,
+        required int count,
+        required String measure,
+        required double price,
+        required String place,
+        required String comments,
+      }) async {
+    try {
+      _startLoading();
+
+      final updatedSked = await ApiService().updateSked(
+        skedId,
+        skedNumber: skedNumber,
+        departmentId: departmentId,
+        employeeId: employeeId,
+        assetCategory: assetCategory,
+        dateReceived: dateReceived,
+        itemName: itemName,
+        serialNumber: serialNumber,
+        count: count,
+        measure: measure,
+        price: price,
+        place: place,
+        comments: comments,
+      );
+
+      final index = _skeds.indexWhere((sked) => sked.id == skedId);
+      if (index != -1) {
+        _skeds[index] = updatedSked;
+      }
+      _clearError();
+      notifyListeners();
+
+      return updatedSked;
+    } catch (e) {
+      _handleError('Failed to update sked $skedId', e);
+      rethrow;
+    } finally {
+      _stopLoading();
+    }
+  }
+
+  Future<void> fetchAllSkeds() async {
+    if (_isLoading) return;
+
+    try {
+      _startLoading();
+      _currentDepartmentId = null;
+
+      final response = await ApiService().fetchAllSkeds();
+      _skeds = response;
+      _clearError();
+    } catch (e) {
+      _handleError('Failed to load all skeds', e);
+      // Можно добавить fallback данные или логику восстановления
+      _skeds = []; // Очищаем список при ошибке
+    } finally {
+      _stopLoading();
+    }
+  }
+
   Future<void> fetchSkedsByDepartment(int departmentId) async {
     if (_isLoading || _currentDepartmentId == departmentId) return;
 
@@ -79,74 +148,9 @@ class SkedProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchAllSkeds() async {
-    if (_isLoading) return;
 
-    try {
-      _startLoading();
-      _currentDepartmentId = null;
 
-      final response = await ApiService().fetchAllSkeds();
-      _skeds = response;
-      _clearError();
-    } catch (e) {
-      _handleError('Failed to load all skeds', e);
-      // Можно добавить fallback данные или логику восстановления
-      _skeds = []; // Очищаем список при ошибке
-    } finally {
-      _stopLoading();
-    }
-  }
 
-  Future<Sked> updateSked(
-      int skedId, {
-        required int skedNumber,
-        required int departmentId,
-        required int employeeId,
-        required String assetCategory,
-        required DateTime dateReceived,
-        required String itemName,
-        required String serialNumber,
-        required int count,
-        required String measure,
-        required double price,
-        required String place,
-        required String comments,
-      }) async {
-    try {
-      _startLoading();
-
-      final updatedSked = await ApiService().updateSked(
-        skedId,
-        skedNumber: skedNumber,
-        departmentId: departmentId,
-        employeeId: employeeId,
-        assetCategory: assetCategory,
-        dateReceived: dateReceived,
-        itemName: itemName,
-        serialNumber: serialNumber,
-        count: count,
-        measure: measure,
-        price: price,
-        place: place,
-        comments: comments,
-      );
-
-      final index = _skeds.indexWhere((sked) => sked.id == skedId);
-      if (index != -1) {
-        _skeds[index] = updatedSked;
-      }
-      _clearError();
-      notifyListeners();
-
-      return updatedSked;
-    } catch (e) {
-      _handleError('Failed to update sked $skedId', e);
-      rethrow;
-    } finally {
-      _stopLoading();
-    }
-  }
 
   Future<void> deleteSked(int skedId) async {
     try {

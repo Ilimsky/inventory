@@ -8,10 +8,53 @@ import '../models/Binding.dart';
 import '../models/Sked.dart';
 
 class ApiService {
-  // final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8060/api'));
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8060/api'));
 
-  final Dio _dio =
-      Dio(BaseOptions(baseUrl: 'https://inventory-3z06.onrender.com/api'));
+  // final Dio _dio =
+  //     Dio(BaseOptions(baseUrl: 'https://inventory-3z06.onrender.com/api'));
+
+  Future<Sked> updateSked(
+      int skedId, {
+        required String skedNumber,
+        required int departmentId,
+        required int employeeId,
+        required String assetCategory,
+        required DateTime dateReceived,
+        required String itemName,
+        required String serialNumber,
+        required int count,
+        required String measure,
+        required double price,
+        required String place,
+        required String comments,
+      }) async {
+    try {
+      final requestData = {
+        'skedNumber': skedNumber,
+        'departmentId': departmentId,
+        'employeeId': employeeId,
+        'assetCategory': assetCategory,
+        'dateReceived': DateFormat('yyyy-MM-dd').format(dateReceived),
+        'itemName': itemName,
+        'serialNumber': serialNumber,
+        'count': count,
+        'measure': measure,
+        'price': price,
+        'place': place,
+        'comments': comments,
+      };
+
+      final response = await _dio.put(
+        '/skeds/$skedId',
+        data: requestData,
+      );
+
+      return Sked.fromJson(response.data);
+    } on DioException catch (e) {
+      print('[ERROR] Dio error: ${e.message}');
+      rethrow;
+    }
+  }
 
   Future<List<Sked>> fetchAllSkeds() async {
     try {
@@ -82,48 +125,7 @@ class ApiService {
     }
   }
 
-  Future<Sked> updateSked(
-    int skedId, {
-    required int skedNumber,
-    required int departmentId,
-    required int employeeId,
-    required String assetCategory,
-    required DateTime dateReceived,
-    required String itemName,
-    required String serialNumber,
-    required int count,
-    required String measure,
-    required double price,
-    required String place,
-    required String comments,
-  }) async {
-    try {
-      final requestData = {
-        'skedNumber': skedNumber,
-        'departmentId': departmentId,
-        'employeeId': employeeId,
-        'assetCategory': assetCategory,
-        'dateReceived': DateFormat('yyyy-MM-dd').format(dateReceived),
-        'itemName': itemName,
-        'serialNumber': serialNumber,
-        'count': count,
-        'measure': measure,
-        'price': price,
-        'place': place,
-        'comments': comments,
-      };
 
-      final response = await _dio.put(
-        '/skeds/$skedId',
-        data: requestData,
-      );
-
-      return Sked.fromJson(response.data);
-    } on DioException catch (e) {
-      print('[ERROR] Dio error: ${e.message}');
-      rethrow;
-    }
-  }
 
   Future<void> deleteSked(int skedId) async {
     try {

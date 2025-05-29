@@ -9,7 +9,7 @@ void handleSort(
     ) {
   switch (columnIndex) {
     case 0:
-      _sort<num>((r) => r.skedNumber, columnIndex, ascending, skedProvider, updateState);
+      _sort<String>((r) => r.skedNumber, columnIndex, ascending, skedProvider, updateState);
       break;
     case 1:
       _sort<DateTime>((r) => r.dateReceived, columnIndex, ascending, skedProvider, updateState);
