@@ -6,7 +6,8 @@ import '../models/Sked.dart';
 import 'DepartmentProvider.dart';
 
 class SkedProvider extends ChangeNotifier {
-  late final DepartmentProvider departmentProvider; // <- Добавляем зависимость
+  late final DepartmentProvider departmentProvider;
+
   SkedProvider({required this.departmentProvider});
 
   List<Sked> _skeds = [];
@@ -14,26 +15,122 @@ class SkedProvider extends ChangeNotifier {
   String? _errorMessage;
   int? _currentDepartmentId;
 
+  // Пагинационные параметры
+  int _currentPage = 0;
+  int _totalPages = 0;
+  int _totalElements = 0;
+  int _pageSize = 20;
+  String? _currentSort;
+
   List<Sked> get skeds => _skeds;
+
   bool get isLoading => _isLoading;
+
   String? get errorMessage => _errorMessage;
+
   int? get currentDepartmentId => _currentDepartmentId;
 
+  int get currentPage => _currentPage;
+
+  int get totalPages => _totalPages;
+
+  int get totalElements => _totalElements;
+
+  int get pageSize => _pageSize;
+  bool _isInitialized = false;
+
+  Future<void> initialize() async {
+    if (_isInitialized) return;
+    await fetchAllSkedsPaged(page: 0, size: 20);
+    _isInitialized = true;
+  }
+
+  Future<void> fetchAllSkedsPaged({
+    int? page,
+    int? size,
+    String? sort,
+  }) async {
+    if (_isLoading) return;
+
+    try {
+      _startLoading();
+      _currentDepartmentId = null;
+
+      final response = await ApiService().fetchAllSkedsPaged(
+        page: page ?? _currentPage,
+        size: size ?? _pageSize,
+        sort: sort ?? _currentSort,
+      );
+
+      _skeds = response.content;
+      _totalPages = response.totalPages;
+      _totalElements = response.totalElements;
+      _currentPage = response.number;
+      _pageSize = response.size;
+      _currentSort = sort;
+
+      _clearError();
+    } catch (e) {
+      _handleError('Failed to load all skeds', e);
+      _skeds = [];
+    } finally {
+      _stopLoading();
+      notifyListeners(); // переместили сюда
+    }
+  }
+
+  Future<void> fetchSkedsByDepartmentPaged({
+    required int departmentId,
+    int? page,
+    int? size,
+    String? sort,
+  }) async {
+    if (_isLoading) return;
+
+    try {
+      _startLoading();
+      _currentDepartmentId = departmentId;
+
+      final response = await ApiService().fetchSkedsByDepartmentPaged(
+        departmentId: departmentId,
+        page: page ?? _currentPage,
+        size: size ?? _pageSize,
+        sort: sort ?? _currentSort,
+      );
+
+      _skeds = response.content;
+      _totalPages = response.totalPages;
+      _totalElements = response.totalElements;
+      _currentPage = response.number;
+      _pageSize = response.size;
+      _currentSort = sort;
+
+      _clearError();
+      print("DEPT $departmentId | Total: $_totalElements | Page: $_currentPage/$_totalPages");
+
+    } catch (e) {
+      _handleError('Failed to load skeds for department $departmentId', e);
+    } finally {
+      _stopLoading();
+      notifyListeners();
+    }
+  }
+
   Future<Sked> updateSked(
-      int skedId, {
-        required String skedNumber,
-        required int departmentId,
-        required int employeeId,
-        required String assetCategory,
-        required DateTime dateReceived,
-        required String itemName,
-        required String serialNumber,
-        required int count,
-        required String measure,
-        required double price,
-        required String place,
-        required String comments,
-      }) async {
+    int skedId, {
+    required String skedNumber,
+    required int departmentId,
+    required int employeeId,
+    required String assetCategory,
+    required DateTime dateReceived,
+    required String itemName,
+    required String serialNumber,
+    required int count,
+    required String measure,
+    required double price,
+    required String place,
+    required String comments,
+  }) async {
     try {
       _startLoading();
 
@@ -148,10 +245,6 @@ class SkedProvider extends ChangeNotifier {
     }
   }
 
-
-
-
-
   Future<void> deleteSked(int skedId) async {
     try {
       _startLoading();
@@ -218,27 +311,32 @@ class SkedProvider extends ChangeNotifier {
       final departments = departmentProvider.departments;
 
       final fromDepartment = departments.firstWhere(
-            (d) => d.id == sked.departmentId,
-        orElse: () => Department(id: sked.departmentId, name: 'ID ${sked.departmentId}'),
+        (d) => d.id == sked.departmentId,
+        orElse: () =>
+            Department(id: sked.departmentId, name: 'ID ${sked.departmentId}'),
       );
 
       final toDepartment = departments.firstWhere(
-            (d) => d.id == newDepartmentId,
-        orElse: () => Department(id: newDepartmentId, name: 'ID $newDepartmentId}'),
+        (d) => d.id == newDepartmentId,
+        orElse: () =>
+            Department(id: newDepartmentId, name: 'ID $newDepartmentId}'),
       );
 
       // Создаём новую запись с обновлёнными данными
       final movedSked = await ApiService().createSked(
         departmentId: newDepartmentId,
-        employeeId: newEmployeeId, // Новый сотрудник
+        employeeId: newEmployeeId,
+        // Новый сотрудник
         assetCategory: sked.assetCategory,
-        dateReceived: newDateReceived, // Новая дата
+        dateReceived: newDateReceived,
+        // Новая дата
         itemName: sked.itemName,
         serialNumber: sked.serialNumber,
         count: sked.count,
         measure: sked.measure,
         price: sked.price,
-        place: newPlace, // Новое местоположение
+        place: newPlace,
+        // Новое местоположение
         comments: 'Перемещено из ${fromDepartment.name}. ${sked.comments}',
       );
 

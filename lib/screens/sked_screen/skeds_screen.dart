@@ -49,14 +49,6 @@ class _SkedsScreenState extends State<SkedsScreen> {
               ...rows.map((row) => pw.Row(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: row.map((sked) {
-                  // Получаем название отдела
-                  // final department = departmentProvider.departments.firstWhere(
-                  //       (d) => d.id == sked.departmentId,
-                  //   orElse: () => Department(id: 0, name: 'Неизвестно'),
-                  // );
-
-                  // Формируем инвентарный номер
-                  // final inventoryNumber = '${department.name}/${sked.skedNumber.toString().padLeft(6, '0')}';
 
                   final qrData = '''
 Инвентарный номер: $sked.skedNumber
@@ -112,7 +104,8 @@ ID: ${sked.id}
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<DepartmentProvider>(context, listen: false)
           .fetchDepartments();
-      Provider.of<SkedProvider>(context, listen: false).fetchAllSkeds();
+      Provider.of<SkedProvider>(context, listen: false).initialize();
+
     });
   }
 
@@ -127,9 +120,9 @@ ID: ${sked.id}
     final provider = Provider.of<SkedProvider>(context, listen: false);
 
     if (departmentId == null) {
-      provider.fetchAllSkeds();
+      provider.fetchAllSkedsPaged();
     } else {
-      provider.fetchSkedsByDepartment(departmentId);
+      provider.fetchSkedsByDepartmentPaged(departmentId: departmentId);
     }
   }
 

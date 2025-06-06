@@ -37,38 +37,134 @@ class _SkedsTableState extends State<SkedsTable> {
       employeeProvider: employeeProvider,
     );
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SingleChildScrollView(
-        child: DataTable(
-          sortColumnIndex: _sortColumnIndex,
-          sortAscending: _isAscending,
-          headingRowHeight: 40,
-          dataRowMinHeight: 30,
-          dataRowMaxHeight: 40,
-          columnSpacing: 1,
-          columns: buildTableColumns(
-            context: context,
-            onSort: (i, asc) => handleSort(
-                i,
-                asc,
-                skedProvider,
-                    (index, ascending) {
-                  setState(() {
-                    _sortColumnIndex = index;
-                    _isAscending = ascending;
-                  });
-                }
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              child: DataTable(
+                sortColumnIndex: _sortColumnIndex,
+                sortAscending: _isAscending,
+                headingRowHeight: 40,
+                dataRowMinHeight: 30,
+                dataRowMaxHeight: 40,
+                columnSpacing: 1,
+                columns: buildTableColumns(
+                  context: context,
+                  onSort: (i, asc) {
+                    final sortField = _getSortField(i);
+                    final sortDirection = asc ? 'asc' : 'desc';
+                    skedProvider.fetchAllSkedsPaged(
+                      sort: '$sortField,$sortDirection',
+                    );
+                    setState(() {
+                      _sortColumnIndex = i;
+                      _isAscending = asc;
+                    });
+                  },
+                  employeeProvider: employeeProvider,
+                ),
+                rows: buildTableRows(
+                  context: context,
+                  skeds: filteredSkeds,
+                  departmentProvider: departmentProvider,
+                  employeeProvider: employeeProvider,
+                ),
+              ),
             ),
-            employeeProvider: employeeProvider,
-          ),
-          rows: buildTableRows(
-            context: context,
-            skeds: filteredSkeds,
-            departmentProvider: departmentProvider,
-            employeeProvider: employeeProvider,
           ),
         ),
+        _buildPaginationControls(skedProvider),
+      ],
+    );
+  }
+
+  String _getSortField(int columnIndex) {
+    switch (columnIndex) {
+      case 0: return 'id';
+      case 1: return 'assetCategory';
+      case 2: return 'dateReceived';
+      case 3: return 'skedNumber';
+      case 4: return 'itemName';
+      case 5: return 'serialNumber';
+      case 6: return 'count';
+      case 7: return 'measure';
+      case 8: return 'price';
+      case 9: return 'place';
+      case 10: return 'employee.name';
+      default: return 'id';
+    }
+  }
+
+  Widget _buildPaginationControls(SkedProvider skedProvider) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Text(
+            'Всего записей: ${skedProvider.totalElements}',
+            style: TextStyle(fontSize: 14),
+          ),
+          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.first_page),
+                onPressed: skedProvider.currentPage > 0
+                    ? () => skedProvider.fetchAllSkedsPaged(page: 0)
+                    : null,
+              ),
+              IconButton(
+                icon: Icon(Icons.chevron_left),
+                onPressed: skedProvider.currentPage > 0
+                    ? () => skedProvider.fetchAllSkedsPaged(
+                  page: skedProvider.currentPage - 1,
+                )
+                    : null,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  '${skedProvider.currentPage + 1} / ${skedProvider.totalPages}',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.chevron_right),
+                onPressed: skedProvider.currentPage < skedProvider.totalPages - 1
+                    ? () => skedProvider.fetchAllSkedsPaged(
+                  page: skedProvider.currentPage + 1,
+                )
+                    : null,
+              ),
+              IconButton(
+                icon: Icon(Icons.last_page),
+                onPressed: skedProvider.currentPage < skedProvider.totalPages - 1
+                    ? () => skedProvider.fetchAllSkedsPaged(
+                  page: skedProvider.totalPages - 1,
+                )
+                    : null,
+              ),
+              SizedBox(width: 16),
+              DropdownButton<int>(
+                value: skedProvider.pageSize,
+                items: [10, 20, 30, 50].map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text('$value на странице'),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    skedProvider.fetchAllSkedsPaged(size: value, page: 0);
+                  }
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
