@@ -14,8 +14,8 @@ class SkedWebSocketService {
 
 
   SkedWebSocketService({
-    this.url = 'ws://10.31.51.206:8060/ws-skeds',
-    // this.url = 'wss://inventory-3z06.onrender.com/ws-skeds',
+    // this.url = 'ws://10.31.51.206:8060/ws-skeds',
+    this.url = 'wss://inventory-3z06.onrender.com/ws-skeds',
     this.token,
     SkedProvider? skedProvider,
   }) {

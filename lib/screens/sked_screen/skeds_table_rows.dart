@@ -38,6 +38,30 @@ DataCell _buildDataCell(
   );
 }
 
+DataCell _buildCommentCell(String text, bool isMoved) {
+  return DataCell(
+    Tooltip(
+      message: text,
+      preferBelow: true,
+      waitDuration: Duration(milliseconds: 300),
+      child: Container(
+        width: 100,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 10,
+            color: isMoved ? Colors.orange : null,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 3,
+          textAlign: TextAlign.center,
+          softWrap: true,
+        ),
+      ),
+    ),
+  );
+}
+
 DataCell _buildAvailabilityCell(
     BuildContext context, Sked sked, DateTime? selectedDate) {
   final provider = Provider.of<SkedProvider>(context, listen: false);
@@ -116,7 +140,8 @@ List<DataRow> buildTableRows({
         _buildDataCell(sked.price.toString(), 60, 1, isMoved, false),
         _buildDataCell(sked.place, 70, 1, isMoved, false),
         _buildDataCell(employee.name, 80, 1, isMoved, false),
-        _buildDataCell(sked.comments, 100, 3, isMoved, false),
+        _buildCommentCell(sked.comments, isMoved),
+        // _buildDataCell(sked.comments, 100, 3, isMoved, false),
         _buildAvailabilityCell(context, sked, selectedDate),
         _buildActionsCell(context, sked, department, employee),
       ],

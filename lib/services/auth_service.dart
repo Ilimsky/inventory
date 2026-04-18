@@ -27,10 +27,10 @@ class AuthService with ChangeNotifier {
   bool get canDeleteReports => isSuperAdmin;
 
   AuthService() {
-    _dio.options.baseUrl = 'http://localhost:8060/api';
+    // _dio.options.baseUrl = 'http://localhost:8060/api';
     // _dio.options.baseUrl = 'http://10.0.2.2:8060/api';
     // _dio.options.baseUrl = 'http://10.31.51.206:8060/api';
-    // _dio.options.baseUrl = 'https://inventory-3z06.onrender.com/api';
+    _dio.options.baseUrl = 'https://inventory-3z06.onrender.com/api';
     _dio.options.connectTimeout = const Duration(seconds: 5);
     _dio.options.receiveTimeout = const Duration(seconds: 3);
     _dio.options.headers['Content-Type'] = 'application/json';

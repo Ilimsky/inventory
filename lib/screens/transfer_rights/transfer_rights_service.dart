@@ -105,7 +105,7 @@ class TransferRightsService {
       'Дата: $date.',
       if (additionalComment != null && additionalComment.trim().isNotEmpty)
         additionalComment.trim(),
-      if (originalComment.isNotEmpty) originalComment,
+      // if (originalComment.isNotEmpty) originalComment,
     ];
     return parts.join(' ');
   }
